@@ -14,16 +14,12 @@ def check_the_value_is_exist_in_array(value: str, array):
 def menu(number: int):
     while number not in range(1, 6):
         number = int(input("Wrong number. Please choose again or the data you selected is already in use\n "
-                           "1. USD => PLN \n 2. EUR => PLN \n 3. CHF => PLN \n 4. EUR => USD \n 5. CHF => USD \n"))
+                           "1. Exchange => PLN \n 2. EUR => USD \n 3. CHF => USD \n"))
     if number == 1:
-        check_the_value_is_exist_in_array("USD => PLN", test)
+        check_the_value_is_exist_in_array("Exchange => PLN", test)
     elif number == 2:
-        check_the_value_is_exist_in_array("EUR => PLN", test)
-    elif number == 3:
-        check_the_value_is_exist_in_array("CHF => PLN", test)
-    elif number == 4:
         check_the_value_is_exist_in_array("EUR => USD", test)
-    elif number == 5:
+    elif number == 3:
         check_the_value_is_exist_in_array("CHF => USD", test)
 
     print(test)
@@ -31,8 +27,8 @@ def menu(number: int):
 def interface():
     start = True
     while start:
-        lang = int(input("Select the currency which you are interested \n 1. USD => PLN \n 2. EUR => PLN "
-                         "\n 3. CHF => PLN \n 4. EUR => USD \n 5. CHF => USD \n"))
+        lang = int(input("Select the currency which you are interested \n "
+                         "1. Exchange => PLN \n 2. EUR => USD \n 3. CHF => USD \n"))
         menu(lang)
 
         end_loop = int(input("Do you want choose another one currency? \n 1.Yes \n 2.No \n"))
@@ -42,7 +38,7 @@ def interface():
         if end_loop == 2:
             start = False
 
-    print(test)
+    return test
 
 
 def get_currency_value(array_list):
@@ -70,11 +66,11 @@ def get_currency_value(array_list):
                 mid_rate = round(rate['mid'], 2)
                 usd_value.append(mid_rate)
 
-    test = exchange_currenct_to_usd(usd_value, eur_value, chf_value)
-    return test
+    output = exchange_currency_to_usd(usd_value, eur_value, chf_value)
+    return output
 
 
-def exchange_currenct_to_usd(usd_currency, eur_currency, chf_currency):
+def exchange_currency_to_usd(usd_currency, eur_currency, chf_currency):
     eur_currency_to_usd = []
     chf_currency_to_usd = []
 
@@ -92,12 +88,12 @@ def get_all_currency_data(array_list):
     file_name = 'all_currency_data.csv'
     set_headers_in_csv(file_name)
     calculated_rates = {}
-    test2 = get_currency_value(array_list)
+    data_of_currency = get_currency_value(array_list)
 
-    for i in range(len(test2[0])):
+    for i in range(len(data_of_currency[0])):
         calculated_rates = {
-            "EUR=>USD": test2[0][i],
-            "CHF=>USD": test2[1][i]
+            "EUR => USD": data_of_currency[0][i],
+            "CHF => USD": data_of_currency[1][i]
         }
 
     for x in array_list:
@@ -109,27 +105,35 @@ def get_all_currency_data(array_list):
             mid_rate = round(rate['mid'], 2)
 
             currency_info = {
-                "Table": data["table"],
-                "Currency": data["currency"],
                 "Code": data["code"],
                 "Date": day,
-                "Exchange to PLN": mid_rate,
-                "EUR=>USD": calculated_rates["EUR=>USD"],
-                "CHF=>USD": calculated_rates["CHF=>USD"]
+                "Exchange => PLN": mid_rate,
+                "EUR => USD": calculated_rates["EUR => USD"],
+                "CHF => USD": calculated_rates["CHF => USD"]
             }
 
-            save_to_csv_file(file_name, currency_info)
+            save_all_to_csv(file_name, currency_info)
 
+def save_selected_to_csv(file_name: str, selected_currencies: list):
+    with open(file_name, 'r', encoding='utf-8') as original_file:
+        reader = csv.DictReader(original_file)
+        selected_headers = ['Table', 'Currency', 'Code', 'Date', 'Exchange => PLN', 'EUR => USD', 'CHF => USD']
+        filtered_data = [row for row in reader if row['Currency'] in selected_currencies]
+
+    with open("selected_currency_data.csv", 'w', encoding='utf-8', newline='') as selected_file:
+        writer = csv.DictWriter(selected_file, fieldnames=selected_headers)
+        writer.writeheader()
+        writer.writerows(filtered_data)
 
 def set_headers_in_csv(filename: str):
     with open(filename, 'a', encoding='utf-8', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=['Table', 'Currency', 'Code', "Date", 'Exchange to PLN', "EUR=>USD",
-                                                     "CHF=>USD"])
+        writer = csv.DictWriter(csvfile, fieldnames=['Code', "Date", 'Exchange => PLN', "EUR => USD",
+                                                     "CHF => USD"])
         writer.writeheader()
 
 
-def save_to_csv_file(file_name: str, data):
+def save_all_to_csv(file_name: str, data):
     with open(file_name, 'a', encoding='utf-8', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=['Table', 'Currency', 'Code', 'Date', 'Exchange to PLN', 'EUR=>USD',
-                                                     'CHF=>USD'])
+        writer = csv.DictWriter(csvfile, fieldnames=['Code', 'Date', 'Exchange => PLN', 'EUR => USD',
+                                                     'CHF => USD'])
         writer.writerow(data)

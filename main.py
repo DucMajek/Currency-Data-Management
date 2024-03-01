@@ -12,7 +12,8 @@ chf = f"https://api.nbp.pl/api/exchangerates/rates/a/chf/{startDate}/{endDate}"
 all_data = [usd, eur, chf]
 
 
-#get_all_currency_data(all_data)
+get_all_currency_data(all_data)
 
-#get_currency_value(all_data)
-interface()
+get_currency_value(all_data)
+#interface()
+
