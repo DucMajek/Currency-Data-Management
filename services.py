@@ -84,6 +84,46 @@ def exchange_currency_to_usd(usd_currency, eur_currency, chf_currency):
     return [eur_currency_to_usd, chf_currency_to_usd]
 
 
+def get_selected_currency_data(array_list, selected_data):
+    file_name = 'selected_currency_data.csv'
+    set_headers_in_csv(file_name)
+    calculated_rates = {}
+    data_of_currency = get_currency_value(array_list)
+    for i in range(len(data_of_currency[0])):
+        calculated_rates = {
+            "EUR => USD": data_of_currency[0][i],
+            "CHF => USD": data_of_currency[1][i]
+        }
+    for x in array_list:
+        res = requests.get(x)
+        data = res.json()
+
+        for rate in data['rates']:
+            day = rate['effectiveDate']
+            mid_rate = round(rate['mid'], 2)
+
+            for i in range(len(selected_data)):
+                if selected_data[i] == "EUR => USD":
+                    currency_info = {
+                        "EUR => USD": calculated_rates["EUR => USD"],
+                    }
+                    save_all_to_csv(file_name, currency_info)
+
+                if selected_data[i] == "CHF => USD":
+                    currency_info = {
+                        "CHF => USD": calculated_rates["CHF => USD"],
+                    }
+                    save_all_to_csv(file_name, currency_info)
+
+                if selected_data[i] == "Exchange => PLN":
+                    currency_info = {
+                        "Code": data["code"],
+                        "Date": day,
+                        "Exchange => PLN": mid_rate,
+                    }
+                    save_all_to_csv(file_name, currency_info)
+
+
 def get_all_currency_data(array_list):
     file_name = 'all_currency_data.csv'
     set_headers_in_csv(file_name)
@@ -114,16 +154,7 @@ def get_all_currency_data(array_list):
 
             save_all_to_csv(file_name, currency_info)
 
-def save_selected_to_csv(file_name: str, selected_currencies: list):
-    with open(file_name, 'r', encoding='utf-8') as original_file:
-        reader = csv.DictReader(original_file)
-        selected_headers = ['Table', 'Currency', 'Code', 'Date', 'Exchange => PLN', 'EUR => USD', 'CHF => USD']
-        filtered_data = [row for row in reader if row['Currency'] in selected_currencies]
 
-    with open("selected_currency_data.csv", 'w', encoding='utf-8', newline='') as selected_file:
-        writer = csv.DictWriter(selected_file, fieldnames=selected_headers)
-        writer.writeheader()
-        writer.writerows(filtered_data)
 
 def set_headers_in_csv(filename: str):
     with open(filename, 'a', encoding='utf-8', newline='') as csvfile:
@@ -137,3 +168,4 @@ def save_all_to_csv(file_name: str, data):
         writer = csv.DictWriter(csvfile, fieldnames=['Code', 'Date', 'Exchange => PLN', 'EUR => USD',
                                                      'CHF => USD'])
         writer.writerow(data)
+        #print(f"Data for {', '.join(data)} has been saved!")
