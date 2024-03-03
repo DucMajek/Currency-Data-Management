@@ -9,7 +9,8 @@ def average(lst):
     return sum(lst) / len(lst)
 
 
-# Function check the selected data is in array selected_data
+# Function to check if the selected data is already in the array 'selected_data'
+# If not, it appends the value to the array
 def check_the_value_is_exist_in_array(value: str, array):
     for element in array:
         if value == element:
@@ -19,7 +20,7 @@ def check_the_value_is_exist_in_array(value: str, array):
     selected_data.append(value)
 
 
-def menu(number: int):
+def add_to_selected_data(number: int):
     while number not in range(1, 4):
         try:
             number = int(input("Wrong number. Please choose again or the data you selected is already in use\n "
@@ -43,7 +44,7 @@ def start():
         try:
             lang = int(input("Select the currency which you are interested \n "
                              "1. Exchange => PLN \n 2. EUR => USD \n 3. CHF => USD \n"))
-            menu(lang)
+            add_to_selected_data(lang)
 
             end_loop = int(input("Do you want to choose another currency? \n 1.Yes \n 2.No \n"))
             while end_loop not in [1, 2]:
