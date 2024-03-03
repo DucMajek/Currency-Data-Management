@@ -7,13 +7,14 @@ import schedule
 logging.basicConfig(filename='currency_data.log', level=logging.INFO)
 
 
+# Function updating the CSV file at 12 PM
 def run_at_12_pm():
     current_time = datetime.now().time()
 
     if current_time.hour == 24 and current_time.minute == 00:
         clear_excel_rows("all_currency_data.csv")
         get_all_currency_data(all_data)
-        logging.info("Data updated at 10:32 PM")
+        logging.info("Data updated at 12:00 PM")
 
 
 endDate = date.today()
@@ -25,10 +26,13 @@ chf = f"https://api.nbp.pl/api/exchangerates/rates/a/chf/{startDate}/{endDate}"
 
 all_data = [usd, eur, chf]
 
-XD = interface()
+start()
+get_all_currency_data(all_data)
 get_selected_currency_data(all_data)
 
-scheduled_task = schedule.every().day.at("24:00").do(run_at_12_pm)
+
+# Script running every day at 12 PM and automatically save the data to the CSV file
+scheduled_task = schedule.every().day.at("12:00").do(run_at_12_pm)
 
 try:
     while not scheduled_task.last_run:

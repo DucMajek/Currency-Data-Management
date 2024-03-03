@@ -9,6 +9,7 @@ def average(lst):
     return sum(lst) / len(lst)
 
 
+# Function check the selected data is in array selected_data
 def check_the_value_is_exist_in_array(value: str, array):
     for element in array:
         if value == element:
@@ -36,9 +37,9 @@ def menu(number: int):
     print(selected_data)
 
 
-def interface():
-    start = True
-    while start:
+def start():
+    start_program = True
+    while start_program:
         try:
             lang = int(input("Select the currency which you are interested \n "
                              "1. Exchange => PLN \n 2. EUR => USD \n 3. CHF => USD \n"))
@@ -49,7 +50,7 @@ def interface():
                 end_loop = int(input("Choose a correct decision \n 1.Yes \n 2.No \n"))
 
             if end_loop == 2:
-                start = False
+                start_program = False
 
         except ValueError:
             print("Please enter a valid number.")
@@ -57,6 +58,8 @@ def interface():
     return selected_data
 
 
+# These functions (get_currency_value and exchange_currency_to_usd) collaborate to fetch currency exchange
+# rates from specified  URLs and convert them do US dollars, returning a list of converted rates
 def get_currency_value(array_list):
     eur_value = []
     chf_value = []
@@ -107,6 +110,8 @@ def exchange_currency_to_usd(usd_currency, eur_currency, chf_currency):
     return [eur_currency_to_usd, chf_currency_to_usd]
 
 
+# Function processes selected currency data, saves it to a CSV file,
+# and provides statistical measures for the specified currencies if selected.
 def get_selected_currency_data(array_list):
     file_name = 'selected_currency_data.csv'
     try:
@@ -180,6 +185,8 @@ def get_selected_currency_data(array_list):
         print(f"An error occurred: {e}")
 
 
+# Function is responsible for fetching currency exchange rate data, processing it,
+# and persistently storing the relevant information in a CSV file
 def get_all_currency_data(array_list):
     file_name = 'all_currency_data.csv'
     try:
@@ -216,6 +223,7 @@ def get_all_currency_data(array_list):
         print(f"An error occurred: {e}")
 
 
+# Clear all rows in CSV file
 def clear_excel_rows(file_name):
     try:
         with open(file_name, 'w', newline='', encoding='utf-8') as csvfile:
@@ -226,6 +234,7 @@ def clear_excel_rows(file_name):
         print(f"An error occurred: {e}")
 
 
+# Set headers in CSV file
 def set_headers_in_csv(filename: str):
     with open(filename, 'a', encoding='utf-8', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=['Code', "Date", 'Exchange => PLN', "EUR => USD",
@@ -233,6 +242,7 @@ def set_headers_in_csv(filename: str):
         writer.writeheader()
 
 
+# Saving all fetched data to the CSV  file by appending
 def save_all_to_csv(file_name: str, data):
     try:
         with open(file_name, 'a', encoding='utf-8', newline='') as csvfile:
@@ -244,6 +254,7 @@ def save_all_to_csv(file_name: str, data):
         print(f"An error occurred while saving to CSV: {e}")
 
 
+# Saving selected data by user in CSV  file
 def save_selected_data_to_csv(file_name: str, data):
     try:
         with open(file_name, 'a', encoding='utf-8', newline='') as csvfile:
